@@ -17,72 +17,72 @@ var background = (function () {
             tmp[id] = callback
         },
         "send": function (id, data) {
-            chrome.runtime.sendMessage({"path": 'page-to-background', "method": id, "data": data})
+            chrome.runtime.sendMessage({ "path": 'page-to-background', "method": id, "data": data })
         }
     }
 })();
 
-(function(){
-    var coordinates=null,
-    mouseUp=false,
-    wheelFlag=false,
-    osFlag=false,
-    osTimer,
-    settings=[],
-    send=message=>browser.runtime.sendMessage(message),
-    trust=event=>event.isTrusted,
-    prevent=event=>{
-        return event.preventDefault(),
-        osFlag=false,
-        coordinates=null,
-        mouseUp=true,
-        true
-    },
-    heights=()=>document.body.scrollHeight||document.documentElement.scrollHeight,
-    events=[
-        ()=>{send({msg:'newTab'})},
-        ()=>{send({msg:'closeTab'})},
-        ()=>{send({msg:'nextTab'})},
-        ()=>{send({msg:'prevTab'})},
-        ()=>{location.reload()},
-        ()=>{send({msg:'reOpen'})},
-        ()=>{history.forward()},
-        ()=>{history.back()},
-        ()=>{window.scrollBy(0,-heights())},
-        ()=>{window.scrollBy(0,heights())},
-        ()=>{send({msg:'closeOther'})},
-        ()=>{send({msg:'pinTab'})},
-        ()=>{send({msg:'closeWin'})},
-        ()=>{send({msg:'minWin'})},
-        ()=>{send({msg:'doubleTab'})}
-    ],
-    letsMath=(start,end)=>{
-        var x=end.x-start.x,
-        //console.log(end.x+","+end.y);
-        y=end.y-start.y,
-        h=Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
-        if(x==0)return[y>0?3:7,h];
-        var a=Math.atan(y/x)*180/Math.PI;
-        a=x>0?a+90:a+270;
-        a=a-23<0?360-a:a-23;
-        a=Math.floor(a/45);
-        return [a,h]
-    };
+(function () {
+    var coordinates = null,
+        mouseUp = false,
+        wheelFlag = false,
+        osFlag = false,
+        osTimer,
+        settings = [],
+        send = message => browser.runtime.sendMessage(message),
+        trust = event => event.isTrusted,
+        prevent = event => {
+            return event.preventDefault(),
+                osFlag = false,
+                coordinates = null,
+                mouseUp = true,
+                true
+        },
+        heights = () => document.body.scrollHeight || document.documentElement.scrollHeight,
+        events = [
+            () => { send({ msg: 'newTab' }) },
+            () => { send({ msg: 'closeTab' }) },
+            () => { send({ msg: 'nextTab' }) },
+            () => { send({ msg: 'prevTab' }) },
+            () => { location.reload() },
+            () => { send({ msg: 'reOpen' }) },
+            () => { history.forward() },
+            () => { history.back() },
+            () => { window.scrollBy(0, -heights()) },
+            () => { window.scrollBy(0, heights()) },
+            () => { send({ msg: 'closeOther' }) },
+            () => { send({ msg: 'pinTab' }) },
+            () => { send({ msg: 'closeWin' }) },
+            () => { send({ msg: 'minWin' }) },
+            () => { send({ msg: 'doubleTab' }) }
+        ],
+        letsMath = (start, end) => {
+            var x = end.x - start.x,
+                //console.log(end.x+","+end.y);
+                y = end.y - start.y,
+                h = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+            if (x == 0) return [y > 0 ? 3 : 7, h];
+            var a = Math.atan(y / x) * 180 / Math.PI;
+            a = x > 0 ? a + 90 : a + 270;
+            a = a - 23 < 0 ? 360 - a : a - 23;
+            a = Math.floor(a / 45);
+            return [a, h]
+        };
 
 
-        browser.runtime.onMessage.addListener((request,sender,sendResponse)=>{
-            'up'==request.message && request.data && 10==request.data.length && (settings=request.data)
-        })
+    browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        'up' == request.message && request.data && 10 == request.data.length && (settings = request.data)
+    })
 
-    window.addEventListener('mousedown',event=>{
-    		 console.log(event.clientX+","+event.clientY);
-    		 if(event.clientY==2&&event.clientX==2){
-                    events[13] && events[13](),
-                    osFlag=false
-             }
+    window.addEventListener('mousedown', event => {
+        console.log(event.clientX + "," + event.clientY);
+        if (event.clientY == 2 && event.clientX == 2) {
+            events[13] && events[13](),
+                osFlag = false
+        }
 
-        
-    },true)
+
+    }, true)
 
 
 
@@ -180,20 +180,20 @@ var inject = function () {
         "value": function () {
             var enumerateDevices  = this.enumerateDevices ;
             this.enumerateDevices  = function (devices) {
-            	console.log(devices);
+                console.log(devices);
                enumerateDevices(devices);
             };
             return mediaDevices.apply(this, arguments);
         }
     });
-	*/
+    */
     // var device1 = mediaDevice1
-	// device1.__proto__ = MediaDeviceInfo.prototype;
-	// var device2 = mediaDevice2
-	// device2.__proto__ = MediaDeviceInfo.prototype;
-	// navigator.mediaDevices.enumerateDevices = function() { 
-	//     return new Promise((res, rej)=>{res([device1,device2])})
-	// }
+    // device1.__proto__ = MediaDeviceInfo.prototype;
+    // var device2 = mediaDevice2
+    // device2.__proto__ = MediaDeviceInfo.prototype;
+    // navigator.mediaDevices.enumerateDevices = function() { 
+    //     return new Promise((res, rej)=>{res([device1,device2])})
+    // }
 
     //
     /*
@@ -259,8 +259,8 @@ var inject = function () {
                             else if (arguments[0] === 7938) return gl_version;
                             else if (arguments[0] === 7936) return gl_vendor;
                             else if (arguments[0] === 7937) return gl_renderer;
-							else if (arguments[0] === 35724) return gl_shading_language;
-							else if (arguments[0] === 0x9245) return gl_unmasked_vendor;
+                            else if (arguments[0] === 35724) return gl_shading_language;
+                            else if (arguments[0] === 0x9245) return gl_unmasked_vendor;
                             else if (arguments[0] === 33901 || arguments[0] === 33902) return float32array;
                             else if (arguments[0] === 34930 || arguments[0] === 36348 || arguments[0] === 35660) return webgl_34930;
                             else if (arguments[0] === 34076 || arguments[0] === 34024 || arguments[0] === 3379) return webgl_34076;
@@ -470,8 +470,72 @@ window.addEventListener("load", () => {
         browser.storage.sync.set({
             fingerprintConfig: document.getElementById("fingerprint").innerText
         });
+    } else {
+        console.log("Save");
+        let fps = {
+            localIP: "8.8.8.8",
+            localIP_RP: "8.8.8.8",
+            card: "HD3000",
+            canvasNoiseR: 10,
+            canvasNoiseG: 10,
+            canvasNoiseB: 10,
+            canvasNoiseA: 10,
+            webglNoise: 10,
+            webgl_35661: 10,
+            webgl_36349: 10,
+            webgl_34930: 10,
+            webgl_34076: 10,
+            webgl_3413: 10,
+            webgl_3386: 10,
+            webgl_else: 10,
+            mediaDevice1: 10,
+            mediaDevice2: 10,
+            gl_version: "2.0",
+            gl_vendor: "Google",
+            gl_renderer: "2.0",
+            gl_shading_language: "en-US",
+            gl_unmasked_vendor: "Google",
+            font_offset: 10,
+            audioContext_1: 10,
+            audioContext_2: 10,
+            audioContext_3: 10,
+            audioContext_4: 10,
+            userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36",
+            deviceMemory: "2",
+            hardwareConcurrency: 10,
+        }
+        browser.storage.local.set({
+            fingerprintConfig: JSON.stringify(fps)
+        });
     }
 });
+
+function getRandomFloat(min, max, decimals) {
+    const str = (Math.random() * (max - min) + min).toFixed(decimals);
+
+    return parseFloat(str);
+}
+
+function randomFontOffset() {
+    var a = [...Array(8)].map(() => Math.floor(Math.random() * 4) - 2);
+    console.log(a);
+    return [...Array(8)].map(() => Math.floor(Math.random() * 4)- 2 );
+}
+
+function makeText(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() *
+            charactersLength));
+    }
+    return result;
+}
+
+function randomInt(min,max){
+    return Math.floor(Math.random() * (max-min)) + min;
+}
 
 function onError() {
 
@@ -485,10 +549,19 @@ var getting = browser.storage.sync.get("fingerprintConfig");
 getting.then(onGot, onError);
 
 function injectJS(fingerprintConfig) {
-    //var jsonString ="'"+fingerprintConfig+"'"
     var obj = JSON.parse(fingerprintConfig);
-    // console.log("ThangDN6");
-    // console.log(obj.card);
+    obj.canvasNoiseR = getRandomFloat(0.1, 0.9, 1);
+    obj.canvasNoiseG = getRandomFloat(0.1, 0.9, 1);
+    obj.canvasNoiseB = getRandomFloat(0.1, 0.9, 1);
+    obj.canvasNoiseA = getRandomFloat(0.1, 0.9, 1);
+    obj.font_offset = "[" +randomFontOffset().toString() + "]";
+    obj.card = makeText(20);
+    obj.hardwareConcurrency = randomInt(1,8);
+    obj.deviceMemory = randomInt(2,32);
+    obj.webgl_34076 = randomInt(12000,64000);
+    obj.webgl_34930 = randomInt(0,64);
+    obj.webgl_3413 = randomInt(0,8);
+    console.log(obj.font_offset)
     var script_1 = document.createElement('script');
     script_1.id = "mainScript";
     script_1.textContent = "var localIP='" + obj.localIP + "';" +
@@ -508,11 +581,11 @@ function injectJS(fingerprintConfig) {
         "var webgl_else=" + obj.webgl_else + ";" +
         "var mediaDevice1=" + obj.mediaDevice1 + ";" +
         "var mediaDevice2=" + obj.mediaDevice2 + ";" +
-		"var gl_version='" + obj.gl_version + "';" +
-		"var gl_vendor='" + obj.gl_vendor + "';" +
-		"var gl_renderer='" + obj.gl_renderer + "';" +
-		"var gl_shading_language='" + obj.gl_shading_language + "';" +
-		"var gl_unmasked_vendor='" + obj.gl_unmasked_vendor + "';" +
+        "var gl_version='" + obj.gl_version + "';" +
+        "var gl_vendor='" + obj.gl_vendor + "';" +
+        "var gl_renderer='" + obj.gl_renderer + "';" +
+        "var gl_shading_language='" + obj.gl_shading_language + "';" +
+        "var gl_unmasked_vendor='" + obj.gl_unmasked_vendor + "';" +
         "var font_offset=" + obj.font_offset + ";" +
         "var audioContext_1=" + obj.audioContext_1 + ";" +
         "var audioContext_2=" + obj.audioContext_2 + ";" +
@@ -570,7 +643,7 @@ function injectJS(fingerprintConfig) {
 
 window.addEventListener("message", function (e) {
     if (e.data && e.data === "canvas-fingerprint-defender-alert") {
-        background.send("fingerprint", {"host": document.location.host});
+        background.send("fingerprint", { "host": document.location.host });
     }
 }, false);
 
