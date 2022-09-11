@@ -71,6 +71,10 @@ var background = (function () {
 
 
     browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        console.log(request.message + "   " + request.data);
+        if ('first' == request.message) {
+            injectJS(request.jsonData);
+        }
         'up' == request.message && request.data && 10 == request.data.length && (settings = request.data)
     })
 
@@ -85,15 +89,9 @@ var background = (function () {
     }, true)
 
 
-
-
-
 })();
 
 var inject = function () {
-    //localStorage.setItem("localIP","192.168.1.5");
-    //var htmlContent = browser.extension.getURL("http://ytb.simplesolution.co/backend/index.php/GetNewController/getLocalIp");
-
 
     const toBlob = HTMLCanvasElement.prototype.toBlob;
     const toDataURL = HTMLCanvasElement.prototype.toDataURL;
@@ -175,32 +173,6 @@ var inject = function () {
             return setLocalDescription.apply(this, arguments);
         }
     });
-    /*
-    Object.defineProperty(Navigator.prototype, "mediaDevices", {
-        "value": function () {
-            var enumerateDevices  = this.enumerateDevices ;
-            this.enumerateDevices  = function (devices) {
-                console.log(devices);
-               enumerateDevices(devices);
-            };
-            return mediaDevices.apply(this, arguments);
-        }
-    });
-    */
-    // var device1 = mediaDevice1
-    // device1.__proto__ = MediaDeviceInfo.prototype;
-    // var device2 = mediaDevice2
-    // device2.__proto__ = MediaDeviceInfo.prototype;
-    // navigator.mediaDevices.enumerateDevices = function() { 
-    //     return new Promise((res, rej)=>{res([device1,device2])})
-    // }
-
-    //
-    /*
-     config.random.items(e,n) : hàm random xáo trộn mảng vào có 1 mảng e vào xáo trộn mảng này .
-     config.random.item() : bốc random 1 phần tử trong mảng ra .
-     webgl_else config.random.item([0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096])
-    */
     var config = {
         "random": {
             "value": function () {
@@ -301,8 +273,6 @@ var inject = function () {
     Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
         get() {
             const height = Math.floor(this.getBoundingClientRect().height);
-            //const valid = height && rand.sign() === 1;
-            //const result = valid ? height + rand.noise() : height;
             if (height % 2 == 0) {
                 result = height + font_offset[0];
             }
@@ -464,104 +434,13 @@ var inject = function () {
     context.createAnalyser(OfflineAudioContext);
     document.documentElement.dataset.cbscriptallow = true;
 };
+
 window.addEventListener("load", () => {
-    if (window.location.href.includes("fingerprintConfig.html") === true) {
-        console.log(document.getElementById("fingerprint").innerText);
-        browser.storage.sync.set({
-            fingerprintConfig: document.getElementById("fingerprint").innerText
-        });
-    } else {
-        console.log("Save");
-        let fps = {
-            localIP: "8.8.8.8",
-            localIP_RP: "8.8.8.8",
-            card: "HD3000",
-            canvasNoiseR: 10,
-            canvasNoiseG: 10,
-            canvasNoiseB: 10,
-            canvasNoiseA: 10,
-            webglNoise: 10,
-            webgl_35661: 10,
-            webgl_36349: 10,
-            webgl_34930: 10,
-            webgl_34076: 10,
-            webgl_3413: 10,
-            webgl_3386: 10,
-            webgl_else: 10,
-            mediaDevice1: 10,
-            mediaDevice2: 10,
-            gl_version: "2.0",
-            gl_vendor: "Google",
-            gl_renderer: "2.0",
-            gl_shading_language: "en-US",
-            gl_unmasked_vendor: "Google",
-            font_offset: 10,
-            audioContext_1: 10,
-            audioContext_2: 10,
-            audioContext_3: 10,
-            audioContext_4: 10,
-            userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36",
-            deviceMemory: "2",
-            hardwareConcurrency: 10,
-        }
-        browser.storage.local.set({
-            fingerprintConfig: JSON.stringify(fps)
-        });
-    }
+    browser.runtime.sendMessage({ msg: "request_data" });
 });
 
-function getRandomFloat(min, max, decimals) {
-    const str = (Math.random() * (max - min) + min).toFixed(decimals);
-
-    return parseFloat(str);
-}
-
-function randomFontOffset() {
-    var a = [...Array(8)].map(() => Math.floor(Math.random() * 4) - 2);
-    console.log(a);
-    return [...Array(8)].map(() => Math.floor(Math.random() * 4)- 2 );
-}
-
-function makeText(length) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() *
-            charactersLength));
-    }
-    return result;
-}
-
-function randomInt(min,max){
-    return Math.floor(Math.random() * (max-min)) + min;
-}
-
-function onError() {
-
-}
-
-function onGot(item) {
-    injectJS(item.fingerprintConfig);
-}
-
-var getting = browser.storage.sync.get("fingerprintConfig");
-getting.then(onGot, onError);
-
-function injectJS(fingerprintConfig) {
-    var obj = JSON.parse(fingerprintConfig);
-    obj.canvasNoiseR = getRandomFloat(0.1, 0.9, 1);
-    obj.canvasNoiseG = getRandomFloat(0.1, 0.9, 1);
-    obj.canvasNoiseB = getRandomFloat(0.1, 0.9, 1);
-    obj.canvasNoiseA = getRandomFloat(0.1, 0.9, 1);
-    obj.font_offset = "[" +randomFontOffset().toString() + "]";
-    obj.card = makeText(20);
-    obj.hardwareConcurrency = randomInt(1,8);
-    obj.deviceMemory = randomInt(2,32);
-    obj.webgl_34076 = randomInt(12000,64000);
-    obj.webgl_34930 = randomInt(0,64);
-    obj.webgl_3413 = randomInt(0,8);
-    console.log(obj.font_offset)
+function injectJS(obj) {
+    console.log(obj.card);
     var script_1 = document.createElement('script');
     script_1.id = "mainScript";
     script_1.textContent = "var localIP='" + obj.localIP + "';" +

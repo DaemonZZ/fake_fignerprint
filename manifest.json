@@ -4,16 +4,15 @@
     "browser_style": true
   },
   "description": "Facking your browser infomation - a product of simplesolution",
-  "homepage_url": "http://simplesolution.co/",
-  "name": "BrowserFaking",
+  "name": "Fingerprint Generator",
   "applications": {
     "gecko": {
-      "id": "faking@simplesolution.co"
+      "id": "abd@xyz"
     }
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "faking@simplesolution.co"
+      "id": "abd@xyz"
     }
   },
   "icons": {
