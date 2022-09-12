@@ -3,7 +3,7 @@
   "browser_action": {
     "browser_style": true
   },
-  "description": "Facking your browser infomation - a product of simplesolution",
+  "description": "Faking your browser infomation - a product of simplesolution",
   "name": "Fingerprint Generator",
   "applications": {
     "gecko": {

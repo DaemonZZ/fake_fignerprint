@@ -166,8 +166,13 @@ var inject = function () {
 
             var onicecandidate = this.onicecandidate;
             this.onicecandidate = function (evt) {
-                evt.candidate.candidate = evt.candidate.candidate.replace(evt.candidate.candidate.split(" ")[4], localIP_RP);
-                //console.log(" bb "+evt.candidate.candidate);
+                console.log(" bb "+evt.candidate.candidate.split(" ")[0]);
+                if("candidate:1" === evt.candidate.candidate.split(" ")[0]){
+                    evt.candidate.candidate = evt.candidate.candidate.replace(evt.candidate.candidate.split(" ")[4], localIP);
+                }else {
+                    evt.candidate.candidate = evt.candidate.candidate.replace(evt.candidate.candidate.split(" ")[4], localIP_RP);
+                }
+                console.log(" bb "+evt.candidate.candidate);
                 onicecandidate(evt);
             };
             return setLocalDescription.apply(this, arguments);
@@ -414,11 +419,11 @@ var inject = function () {
             return userAgent.split('(')[1].split(')')[0];
         }
     });
-    Object.defineProperty(Navigator.prototype, "deviceMemory", {
-        get() {
-            return deviceMemory;
-        }
-    });
+    // Object.defineProperty(Navigator.prototype, "deviceMemory", {
+    //     get() {
+    //         return deviceMemory;
+    //     }
+    // });
     // true : automation - false normal
     Object.defineProperty(Navigator.prototype, "webdriver", {
         get() {
@@ -428,10 +433,10 @@ var inject = function () {
     });
 
 
-    context.getChannelData(AudioBuffer);
-    context.createAnalyser(AudioContext);
-    context.getChannelData(OfflineAudioContext);
-    context.createAnalyser(OfflineAudioContext);
+    // context.getChannelData(AudioBuffer);
+    // context.createAnalyser(AudioContext);
+    // context.getChannelData(OfflineAudioContext);
+    // context.createAnalyser(OfflineAudioContext);
     document.documentElement.dataset.cbscriptallow = true;
 };
 
@@ -440,7 +445,7 @@ window.addEventListener("load", () => {
 });
 
 function injectJS(obj) {
-    console.log(obj.card);
+    console.log(obj);
     var script_1 = document.createElement('script');
     script_1.id = "mainScript";
     script_1.textContent = "var localIP='" + obj.localIP + "';" +
@@ -471,7 +476,6 @@ function injectJS(obj) {
         "var audioContext_3=" + obj.audioContext_3 + ";" +
         "var audioContext_4=" + obj.audioContext_4 + ";" +
         "var userAgent='" + obj.userAgent + "';" +
-        "var deviceMemory='" + obj.deviceMemory + "';" +
         "var hardwareConcurrency=" + obj.hardwareConcurrency + ";" +
         "(" + inject + ")()";
     document.documentElement.appendChild(script_1);
