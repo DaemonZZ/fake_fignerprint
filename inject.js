@@ -166,13 +166,13 @@ var inject = function () {
 
             var onicecandidate = this.onicecandidate;
             this.onicecandidate = function (evt) {
-                console.log(" bb "+evt.candidate.candidate.split(" ")[0]);
-                if("candidate:1" === evt.candidate.candidate.split(" ")[0]){
+                console.log(" bb " + evt.candidate.candidate.split(" ")[0]);
+                if ("candidate:1" === evt.candidate.candidate.split(" ")[0]) {
                     evt.candidate.candidate = evt.candidate.candidate.replace(evt.candidate.candidate.split(" ")[4], localIP);
-                }else {
+                } else {
                     evt.candidate.candidate = evt.candidate.candidate.replace(evt.candidate.candidate.split(" ")[4], localIP_RP);
                 }
-                console.log(" bb "+evt.candidate.candidate);
+                console.log(" bb " + evt.candidate.candidate);
                 onicecandidate(evt);
             };
             return setLocalDescription.apply(this, arguments);
@@ -226,6 +226,7 @@ var inject = function () {
                         "value": function () {
                             var float32array = new Float32Array([1, 8192]);
                             //
+                            console.log(arguments[0]);
                             if (arguments[0] === 3415) return 0;
                             else if (arguments[0] === 3414) return 24;
                             else if (arguments[0] === 35661) return webgl_35661;
@@ -438,6 +439,60 @@ var inject = function () {
     // context.getChannelData(OfflineAudioContext);
     // context.createAnalyser(OfflineAudioContext);
     document.documentElement.dataset.cbscriptallow = true;
+
+    /**
+   * Spoof screen resolution.
+   */
+
+    /**
+   * Define property on an object.
+   */
+    var defineProp = function (obj, prop, val) {
+        Object.defineProperty(obj, prop, {
+            enumerable: true,
+            configurable: true,
+            value: val
+        });
+    };
+    /**
+     * Return screen attributes based on the most commons ones.
+     */
+    var getScreenAttrs = function () {
+        return {
+            width: screenRes[0],
+            height: screenRes[1],
+            colorDepth: 32,
+            pixelDepth: 32
+        };
+    };
+    /**
+     * Spoof screen resolution.
+     */
+    var spoofScreenResolution = function () {
+        var screen = getScreenAttrs();
+        defineProp(window.screen, "width", screen.width);
+        defineProp(window.screen, "height", screen.height);
+        defineProp(window.screen, "availWidth", screen.width);
+        defineProp(window.screen, "availHeight", screen.height);
+        defineProp(window.screen, "top", 0);
+        defineProp(window.screen, "left", 0);
+        defineProp(window.screen, "availTop", 0);
+        defineProp(window.screen, "availLeft", 0);
+        defineProp(window.screen, "colorDepth", screen.colorDepth);
+        defineProp(window.screen, "pixelDepth", screen.pixelDepth);
+        
+    };
+
+    /**
+     * Initialize script
+     */
+    var init = function () {
+        console.log("obj");
+        console.log(screenRes);
+        spoofScreenResolution();
+    };
+    init();
+
 };
 
 window.addEventListener("load", () => {
@@ -445,7 +500,7 @@ window.addEventListener("load", () => {
 });
 
 function injectJS(obj) {
-    console.log(obj);
+    
     var script_1 = document.createElement('script');
     script_1.id = "mainScript";
     script_1.textContent = "var localIP='" + obj.localIP + "';" +
@@ -477,6 +532,7 @@ function injectJS(obj) {
         "var audioContext_4=" + obj.audioContext_4 + ";" +
         "var userAgent='" + obj.userAgent + "';" +
         "var hardwareConcurrency=" + obj.hardwareConcurrency + ";" +
+        "var screenRes=" + obj.screenRes + ";" +
         "(" + inject + ")()";
     document.documentElement.appendChild(script_1);
     if (document.documentElement.dataset.cbscriptallow !== "true") {
